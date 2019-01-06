@@ -130,7 +130,14 @@ async function getRecipe(recipeId, data, url) {
 axios.get(`https://www.allrecipes.com/recipe/${recipeId}/`).then(result => {
   const { data, config: { url } } = result;
   console.log(url);
-  getRecipe(recipeId, data, url)
+  getRecipe(recipeId, data, url).then(recipe => {
+    console.log(recipe)
+    if (recipe) {
+      // check if recipe is already saved via hash
+
+      // save recipe
+    }
+  });
 }).catch(error => {
   if (error.response) {
     const { status } = error.response;
