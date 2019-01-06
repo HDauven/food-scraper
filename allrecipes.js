@@ -132,5 +132,16 @@ axios.get(`https://www.allrecipes.com/recipe/${recipeId}/`).then(result => {
   console.log(url);
   getRecipe(recipeId, data, url)
 }).catch(error => {
-
+  if (error.response) {
+    const { status } = error.response;
+    switch (status) {
+      case 404:
+        console.log(`Status ${status}`);
+        break;
+      default:
+        console.log(`Status ${status} - ${error.response}\n\n`);
+        console.log(error.stack);
+        break;
+    }
+  }
 })
