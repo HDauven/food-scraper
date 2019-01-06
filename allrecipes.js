@@ -1,5 +1,6 @@
 const axios = require('axios');
 const cheerio = require('cheerio')
+const objectHash = require('object-hash');
 
 async function getRecipe(recipeId, data, url) {
   try { 
@@ -9,6 +10,11 @@ async function getRecipe(recipeId, data, url) {
     if (!imageUrl) {
       return null;
     }
+
+    const name = $('#recipe-main-content').text() || null;
+    const recipeBy = $('.submitter__name').text() || null;
+    const rating = $('.rating-stars').attr('data-ratingstars');
+    const reviews = $('.review-count').text().match(/\d+/g).join('');
 
     const categories = [];
     $('.toggle-similar__title').each((index, element) => {
@@ -102,20 +108,22 @@ async function getRecipe(recipeId, data, url) {
 
     const recipe = {
       recipeId,
-      name: $('#recipe-main-content').text() || null,
+      name,
       categories,
-      recipeBy: $('.submitter__name').text() || null,
+      recipeBy,
       imageUrl,
-      rating: $('.rating-stars').attr('data-ratingstars'),
+      rating,
       time,
       servings,
       ingredients,
       instructions,
       nutrition,
-      reviews: $('.review-count').text().match(/\d+/g).join(''),
+      reviews,
       url,
       source: 'allrecipes.com'
     }
+
+    recipe.hash = objectHash(recipe);
     
     return recipe;
   } catch (error) {
