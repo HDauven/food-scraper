@@ -5,6 +5,11 @@ async function getRecipe(recipeId, data, url) {
   try { 
     const $ = cheerio.load(data);
 
+    const imageUrl = $('#BI_openPhotoModal1').attr('src') || null;
+    if (!imageUrl) {
+      return null;
+    }
+
     const categories = [];
     $('.toggle-similar__title').each((index, element) => {
       const category = $(element).text().trim();
@@ -100,7 +105,7 @@ async function getRecipe(recipeId, data, url) {
       name: $('#recipe-main-content').text() || null,
       categories,
       recipeBy: $('.submitter__name').text() || null,
-      imageUrl: $('#BI_openPhotoModal1').attr('src') || null,
+      imageUrl,
       rating: $('.rating-stars').attr('data-ratingstars'),
       time,
       servings,
@@ -111,18 +116,21 @@ async function getRecipe(recipeId, data, url) {
       url,
       source: 'allrecipes.com'
     }
-
-    console.log(recipe);
+    
+    return recipe;
   } catch (error) {
     console.error(error);
   }
 }
 
 // const recipeId = 22364;
-// const recipeId = 256165;
-const recipeId = 57375;
+ const recipeId = 256165;
+// const recipeId = 57375;
+//const recipeId = 100;
 axios.get(`https://www.allrecipes.com/recipe/${recipeId}/`).then(result => {
   const { data, config: { url } } = result;
   console.log(url);
-  getRecipe(recipeId, data, url);
+  getRecipe(recipeId, data, url)
+}).catch(error => {
+
 })
