@@ -128,6 +128,7 @@ async function getRecipe(recipeId, data, url) {
     return recipe;
   } catch (error) {
     console.error(error);
+    return null;
   }
 }
 
