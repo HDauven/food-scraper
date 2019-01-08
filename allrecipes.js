@@ -1,12 +1,14 @@
 const axios = require('axios');
 const cheerio = require('cheerio')
 const objectHash = require('object-hash');
+const mongoose = require('mongoose');
 
+const Recipe = require('./models/recipe');
 const {
   getMinutes
 } = require('./util')
 
-async function getRecipe(recipeId, data, url) {
+const extractRecipeData = async (recipeId, data, url) => {
   try {
     const $ = cheerio.load(data);
 
@@ -136,39 +138,78 @@ async function getRecipe(recipeId, data, url) {
   }
 }
 
+const saveAndUpdateRecipe = async (recipe) => {
+  if (recipe) {
+    const recipeId = recipe.recipeId;
+    // check if recipe is already saved
+    const storedRecipe = await Recipe.findOne({
+      recipeId
+    });
+
+    // Check whether recipe already exists
+    if (!storedRecipe) {
+      // Save recipe
+      await Recipe.create(recipe);
+      console.log("Recipe saved");
+      return;
+    }
+
+    // Check whether the existing saved recipe has been changed
+    if (storedRecipe.hash === recipe.hash) {
+      console.log("Recipe up to date");
+      return;
+    }
+
+    // Update recipe
+    await Recipe.updateOne({
+      recipeId
+    });
+    console.log("Recipe updated");
+  }
+}
+
 const recipeId = 22364;
 //const recipeId = 256165;
 //const recipeId = 57375;
 //const recipeId = 100;
-axios.get(`https://www.allrecipes.com/recipe/${recipeId}/`).then(result => {
-  const {
-    data,
-    config: {
-      url
-    }
-  } = result;
-  console.log(url);
-  getRecipe(recipeId, data, url).then(recipe => {
-    console.log(recipe)
-    if (recipe) {
-      // check if recipe is already saved via hash
 
-      // save recipe
-    }
-  });
-}).catch(error => {
-  if (error.response) {
+const MONGODB_URI = `mongodb+srv://main:E45zJiHxXoJwXsJn@cluster0-3i6r8.mongodb.net/test?retryWrites=true`;
+mongoose
+  .connect(MONGODB_URI, {
+    useNewUrlParser: true
+  })
+  .catch(err => console.log(err));
+
+
+const getRecipe = async (recipeId) => {
+  try {
+    const result = await axios.get(`https://www.allrecipes.com/recipe/${recipeId}/`);
     const {
-      status
-    } = error.response;
-    switch (status) {
-      case 404:
-        console.log(`Status ${status}`);
-        break;
-      default:
-        console.log(`Status ${status} - ${error.response}\n\n`);
-        console.log(error.stack);
-        break;
+      data,
+      config: {
+        url
+      }
+    } = result;
+    console.log(url);
+    const recipe = await extractRecipeData(recipeId, data, url)
+    await saveAndUpdateRecipe(recipe);
+  } catch (error) {
+    if (error.response) {
+      const {
+        status
+      } = error.response;
+      switch (status) {
+        case 404:
+          console.log(`Status ${status}`);
+          break;
+        default:
+          console.log(`Status ${status} - ${error.response}\n\n`);
+          console.log(error.stack);
+          break;
+      }
+    } else {
+      console.error(error);
     }
   }
-})
+}
+getRecipe(recipeId);
