@@ -3,7 +3,7 @@ const cheerio = require('cheerio')
 const objectHash = require('object-hash');
 
 async function getRecipe(recipeId, data, url) {
-  try { 
+  try {
     const $ = cheerio.load(data);
 
     const imageUrl = $('#BI_openPhotoModal1').attr('src') || null;
@@ -13,8 +13,8 @@ async function getRecipe(recipeId, data, url) {
 
     const name = $('#recipe-main-content').text() || null;
     const recipeBy = $('.submitter__name').text() || null;
-    const rating = $('.rating-stars').attr('data-ratingstars');
-    const reviews = $('.review-count').text().match(/\d+/g).join('');
+    const rating = Number($('.rating-stars').attr('data-ratingstars'));
+    const reviews = Number($('.review-count').text().match(/\d+/g).join(''));
 
     const categories = [];
     $('.toggle-similar__title').each((index, element) => {
@@ -72,7 +72,7 @@ async function getRecipe(recipeId, data, url) {
           break;
         case 'sodiumContent':
           nutrition.sodium = el.text().trim() + el.next().text().replace(/\b[-.,()&$#!\[\]{};"']+\B|\B[-.,()&$#!\[\]{};"']+\b/g, "");
-          break;          
+          break;
         default:
           break;
       }
@@ -124,7 +124,7 @@ async function getRecipe(recipeId, data, url) {
     }
 
     recipe.hash = objectHash(recipe);
-    
+
     return recipe;
   } catch (error) {
     console.error(error);
@@ -132,12 +132,17 @@ async function getRecipe(recipeId, data, url) {
   }
 }
 
-// const recipeId = 22364;
- const recipeId = 256165;
-// const recipeId = 57375;
+const recipeId = 22364;
+//const recipeId = 256165;
+//const recipeId = 57375;
 //const recipeId = 100;
 axios.get(`https://www.allrecipes.com/recipe/${recipeId}/`).then(result => {
-  const { data, config: { url } } = result;
+  const {
+    data,
+    config: {
+      url
+    }
+  } = result;
   console.log(url);
   getRecipe(recipeId, data, url).then(recipe => {
     console.log(recipe)
@@ -149,7 +154,9 @@ axios.get(`https://www.allrecipes.com/recipe/${recipeId}/`).then(result => {
   });
 }).catch(error => {
   if (error.response) {
-    const { status } = error.response;
+    const {
+      status
+    } = error.response;
     switch (status) {
       case 404:
         console.log(`Status ${status}`);
