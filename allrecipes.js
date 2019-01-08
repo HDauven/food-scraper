@@ -1,3 +1,4 @@
+require('dotenv').config();
 const axios = require('axios');
 const cheerio = require('cheerio')
 const objectHash = require('object-hash');
@@ -7,6 +8,18 @@ const Recipe = require('./models/recipe');
 const {
   getMinutes
 } = require('./util')
+
+const {
+  DB_HOST,
+  DB_USER,
+  DB_PASS
+} = process.env;
+const MONGODB_URI = `mongodb+srv://${DB_USER}:${DB_PASS}@${DB_HOST}/recipes?retryWrites=true`;
+mongoose
+  .connect(MONGODB_URI, {
+    useNewUrlParser: true
+  })
+  .catch(err => console.log(err));
 
 const extractRecipeData = async (recipeId, data, url) => {
   try {
@@ -172,14 +185,6 @@ const recipeId = 22364;
 //const recipeId = 256165;
 //const recipeId = 57375;
 //const recipeId = 100;
-
-const MONGODB_URI = `mongodb+srv://main:E45zJiHxXoJwXsJn@cluster0-3i6r8.mongodb.net/test?retryWrites=true`;
-mongoose
-  .connect(MONGODB_URI, {
-    useNewUrlParser: true
-  })
-  .catch(err => console.log(err));
-
 
 const getRecipe = async (recipeId) => {
   try {
