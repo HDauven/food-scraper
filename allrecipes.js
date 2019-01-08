@@ -2,6 +2,10 @@ const axios = require('axios');
 const cheerio = require('cheerio')
 const objectHash = require('object-hash');
 
+const {
+  getMinutes
+} = require('./util')
+
 async function getRecipe(recipeId, data, url) {
   try {
     const $ = cheerio.load(data);
@@ -90,11 +94,11 @@ async function getRecipe(recipeId, data, url) {
       }
 
       if (el.includes('Prep')) {
-        time.prep = el;
+        time.prep = getMinutes(el);
       } else if (el.includes('Ready')) {
-        time.readyIn = el;
+        time.readyIn = getMinutes(el);
       } else if (el.includes('Cook')) {
-        time.cook = el;
+        time.cook = getMinutes(el);
       }
     })
 
