@@ -6,7 +6,8 @@ const mongoose = require('mongoose');
 
 const Recipe = require('./models/recipe');
 const {
-  getMinutes
+  getMinutes,
+  sleepTimer
 } = require('./util')
 
 const {
@@ -217,4 +218,12 @@ const getRecipe = async (recipeId) => {
     }
   }
 }
-getRecipe(recipeId);
+
+const startRecipeId = 22352;
+const endRecipeId = 270000;
+(async function () {
+  for (let recipeId = startRecipeId; recipeId < endRecipeId; recipeId++) {
+    getRecipe(recipeId)
+    await sleepTimer(1000);
+  }
+})();
