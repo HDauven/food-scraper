@@ -1,7 +1,3 @@
-const prep = 'Prep time: 20 Minutes';
-const cook = "cook time: 2 hours 14 minutes";
-const readyIn = 'Ready in 2 Hours 34 Minutes';
-
 const getMinutes = (inputString) => {
   if (!inputString) {
     return null;
@@ -33,7 +29,3 @@ module.exports = {
   getMinutes,
   sleepTimer
 };
-
-console.log(getMinutes(prep));
-console.log(getMinutes(cook));
-console.log(getMinutes(readyIn));
