@@ -28,7 +28,7 @@ const extractRecipeData = async (recipeId, data, url) => {
 
     const imageUrl = $('#BI_openPhotoModal1').attr('src') || null;
     if (!imageUrl) {
-      console.log("No image");
+      console.log(`Recipe ${recipeId} has no image`);
       return null;
     }
 
@@ -165,13 +165,13 @@ const saveAndUpdateRecipe = async (recipe) => {
     if (!storedRecipe) {
       // Save recipe
       await Recipe.create(recipe);
-      console.log("Recipe saved");
+      console.log(`Recipe ${recipeId} saved`);
       return;
     }
 
     // Check whether the existing saved recipe has been changed
     if (storedRecipe.hash === recipe.hash) {
-      console.log("Recipe up to date");
+      console.log(`Recipe ${recipeId} up to date`);
       return;
     }
 
@@ -179,7 +179,7 @@ const saveAndUpdateRecipe = async (recipe) => {
     await Recipe.updateOne({
       recipeId
     });
-    console.log("Recipe updated");
+    console.log(`Recipe ${recipeId} updated`);
   }
 }
 
@@ -214,12 +214,14 @@ const getRecipe = async (recipeId) => {
   }
 }
 
-const startRecipeId = 22352;
+// const startRecipeId = 22352;
+const startRecipeId = 23600;
 const endRecipeId = 270000;
 (async function () {
   for (let recipeId = startRecipeId; recipeId < endRecipeId; recipeId++) {
-    console.log(recipeId);
-    getRecipe(recipeId)
-    await sleepTimer(1000);
+    console.log(recipeId, new Date());
+    getRecipe(recipeId);
+    const offset = Math.floor(Math.random() * 4000) + 1000;
+    await sleepTimer(1000 + offset);
   }
 })();
