@@ -27,8 +27,11 @@ const getMinutes = (inputString) => {
   return totalMinutes;
 }
 
+const sleepTimer = ms => new Promise(res => setTimeout(res, ms));
+
 module.exports = {
-  getMinutes
+  getMinutes,
+  sleepTimer
 };
 
 console.log(getMinutes(prep));
