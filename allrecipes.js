@@ -28,6 +28,7 @@ const extractRecipeData = async (recipeId, data, url) => {
 
     const imageUrl = $('#BI_openPhotoModal1').attr('src') || null;
     if (!imageUrl) {
+      console.log("No image");
       return null;
     }
 
@@ -182,11 +183,6 @@ const saveAndUpdateRecipe = async (recipe) => {
   }
 }
 
-const recipeId = 22364;
-//const recipeId = 256165;
-//const recipeId = 57375;
-//const recipeId = 100;
-
 const getRecipe = async (recipeId) => {
   try {
     const result = await axios.get(`https://www.allrecipes.com/recipe/${recipeId}/`);
@@ -196,7 +192,6 @@ const getRecipe = async (recipeId) => {
         url
       }
     } = result;
-    console.log(url);
     const recipe = await extractRecipeData(recipeId, data, url)
     await saveAndUpdateRecipe(recipe);
   } catch (error) {
@@ -223,6 +218,7 @@ const startRecipeId = 22352;
 const endRecipeId = 270000;
 (async function () {
   for (let recipeId = startRecipeId; recipeId < endRecipeId; recipeId++) {
+    console.log(recipeId);
     getRecipe(recipeId)
     await sleepTimer(1000);
   }
