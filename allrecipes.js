@@ -208,6 +208,14 @@ const getRecipe = async (recipeId) => {
           console.log(error.stack);
           break;
       }
+    } else if (error.code) {
+      if (error.code === 'ECONNRESET') {
+        console.log(`Connection refused for recipe ${recipeId}`);
+        await sleepTimer(1000);
+        process.exit();
+      } else {
+        console.error(error);
+      }
     } else {
       console.error(error);
     }
@@ -215,7 +223,7 @@ const getRecipe = async (recipeId) => {
 }
 
 // const startRecipeId = 22352;
-const startRecipeId = 23600;
+const startRecipeId = 25598;
 const endRecipeId = 270000;
 (async function () {
   for (let recipeId = startRecipeId; recipeId < endRecipeId; recipeId++) {
