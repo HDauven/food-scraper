@@ -1,5 +1,6 @@
 require("dotenv").config();
 const fs = require('fs');
+const downloadImage = require("./downloadImage");
 
 const dbName = "recipes";
 const {
@@ -139,6 +140,7 @@ async function retrieveRecipesForCategories(collection, categories) {
       const recipeData = await collection.findOne({
         _id: new ObjectID(recipe.id)
       });
+      await downloadImage(recipeData.imageUrl, recipeData.recipeId + '.jpg');
       recipeArray.push(recipeData);
     };
     categoryObject.recipes = recipeArray;
